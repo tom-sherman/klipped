@@ -1,0 +1,30 @@
+{
+  "name": "klipped",
+  "main": "main/index.js",
+  "description": "Temporary files.",
+  "scripts": {
+    "start": "electron .",
+    "build": "next build renderer && next export renderer",
+    "dist": "npm run build && build"
+  },
+  "author": "Tom Sherman <the.tomsherman@gmail.com>",
+  "devDependencies": {
+    "electron": "^4.0.0",
+    "electron-builder": "^20.38.4",
+    "next": "^7.0.2",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
+  },
+  "dependencies": {
+    "electron-is-dev": "^1.0.1",
+    "electron-next": "^3.1.5",
+    "fs-extra": "^7.0.1"
+  },
+  "build": {
+    "files": [
+      "**/*",
+      "!renderer",
+      "renderer/out"
+    ]
+  }
+}
