@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import Link from 'next/link'
+import Router from 'next/router'
 
 export class FileCreator extends Component {
   state = {
@@ -19,14 +19,48 @@ export class FileCreator extends Component {
     }
   }
 
+  handleSubmit = () => {
+    Router.push({
+      pathname: '/file',
+      query: {
+        data: this.state.text,
+        name: this.state.name
+      }
+    })
+  }
+
+  submitOnKeyPress = (event, { withControl = false } = {}) => {
+    if (event.key !== '\n' && event.key !== 'Enter') {
+      return
+    }
+
+    if (withControl && !event.ctrlKey) {
+      return
+    }
+
+    this.handleSubmit()
+  }
+
   render () {
     return (
       <>
-        <textarea value={this.state.text} onChange={this.handleTextChange}></textarea>
-        <input type='text' value={this.state.name || ''} onChange={this.handleNameChange}></input>
-        <Link href={{ pathname: 'file', query: { data: this.state.text, name: this.state.name } }}>
-          <a>Submit</a>
-        </Link>
+        <textarea
+          value={this.state.text}
+          onChange={this.handleTextChange}
+          onKeyPress={e => this.submitOnKeyPress(e, { withControl: true })}
+        ></textarea>
+        <input
+          type='text'
+          value={this.state.name || ''}
+          onChange={this.handleNameChange}
+          onKeyPress={this.submitOnKeyPress}
+        ></input>
+        <button
+          type='button'
+          onClick={this.handleSubmit}
+        >
+          Submit
+        </button>
       </>
     )
   }
