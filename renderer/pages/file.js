@@ -1,20 +1,21 @@
 import { Component } from 'react'
 import electron from 'electron'
+import { withRouter } from 'next/router'
 import { FileDraggable } from '../components/file-draggable'
 
-export default class File extends Component {
+class File extends Component {
   state = {
     error: null,
     filePath: null
   }
 
-  static getInitialProps ({ query }) {
-    return { name: query.name, data: query.data }
-  }
-
   async componentDidMount () {
     let filePath
-    const { name, data } = this.props
+    const { name, data } = this.props.router.query
+
+    if (!data) {
+      this.setState({ error: new Error('No data found.') })
+    }
 
     try {
       if (name) {
@@ -37,6 +38,8 @@ export default class File extends Component {
       : <FileDraggable filePath={this.state.filePath} name={this.props.name} />
   }
 }
+
+export default withRouter(File)
 
 function resolveFilePath ({ data, name }) {
   return new Promise((resolve, reject) => {
