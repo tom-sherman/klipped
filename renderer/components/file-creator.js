@@ -3,8 +3,8 @@ import Link from 'next/link'
 
 export class FileCreator extends Component {
   state = {
-    text: null,
-    name: null
+    text: '',
+    name: ''
   }
 
   handleTextChange = event => {

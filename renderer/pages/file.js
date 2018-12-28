@@ -1,35 +1,51 @@
-import { ipcRenderer } from 'electron'
 import { Component } from 'react'
+import electron from 'electron'
 import { FileDraggable } from '../components/file-draggable'
-import Error from 'next/error'
 
 export default class File extends Component {
-  static async getInitialProps ({ query }) {
+  state = {
+    error: null,
+    filePath: null
+  }
+
+  static getInitialProps ({ query }) {
+    return { name: query.name, data: query.data }
+  }
+
+  async componentDidMount () {
     let filePath
+    const { name, data } = this.props
 
     try {
-      if (query.name) {
-        filePath = await resolveFilePath({ data: query.data, name: query.name })
+      if (name) {
+        filePath = await resolveFilePath({ data, name })
       } else {
-        filePath = await resolveFilePath({ data: query.data })
+        filePath = await resolveFilePath({ data })
       }
     } catch (err) {
       console.error(err)
-      return { error: 'Failed to save file.' }
+      this.setState({ error: err })
+      return
     }
 
-    return { filePath, data: query.data, name: query.name }
+    this.setState({ filePath })
   }
 
   render () {
-    return this.props.error
-      ? <Error statusCode={500} /> // TODO: Custom error component
-      : <FileDraggable filePath={this.props.filePath} name={this.props.name} />
+    return this.state.error
+      ? <span>{this.state.error.message}</span>// <Error statusCode={500} /> // TODO: Custom error component
+      : <FileDraggable filePath={this.state.filePath} name={this.props.name} />
   }
 }
 
 function resolveFilePath ({ data, name }) {
   return new Promise((resolve, reject) => {
+    if (!electron.ipcRenderer) {
+      return reject(null)
+    }
+
+    const { ipcRenderer } = electron
+
     ipcRenderer.send('data', { data, name })
     ipcRenderer.on('file', (_, filePath) => resolve(filePath))
     ipcRenderer.on('error', err => reject(err))
