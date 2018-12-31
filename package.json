@@ -19,7 +19,8 @@
   "dependencies": {
     "electron-is-dev": "^1.0.1",
     "electron-next": "^3.1.5",
-    "fs-extra": "^7.0.1"
+    "fs-extra": "^7.0.1",
+    "uuid": "^3.3.2"
   },
   "build": {
     "files": [

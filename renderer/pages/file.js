@@ -49,7 +49,7 @@ function resolveFilePath ({ data, name }) {
 
     const { ipcRenderer } = electron
 
-    ipcRenderer.send('data', { data, name })
+    ipcRenderer.send('newfile', { data, name })
     ipcRenderer.on('file', (_, filePath) => resolve(filePath))
     ipcRenderer.on('error', err => reject(err))
   })

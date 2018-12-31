@@ -2,9 +2,14 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const prepareNext = require('electron-next')
 const isDev = require('electron-is-dev')
 const path = require('path')
-const { saveTempFile, renameTempFile } = require('./temp-file')
+const os = require('os')
+const { KlipStore } = require('./klip-store')
 
 let mainWindow
+const store = new KlipStore({
+  dir: path.join(os.tmpdir(), 'klipped'),
+  defaultName: 'untitled.txt'
+})
 
 function createWindow () {
   // Create the browser window.
@@ -28,6 +33,7 @@ function createWindow () {
 }
 
 app.on('ready', async () => {
+  await store.init()
   await prepareNext('./renderer')
   createWindow()
 })
@@ -47,36 +53,18 @@ app.on('activate', function () {
   }
 })
 
-ipcMain.on('data', async (event, {data, name}) => {
-  let filePath
-
-  try {
-    filePath = await saveTempFile({data, name})
-  } catch (err) {
-    console.error(err)
-    event.sender.send('error', err)
-    return
-  }
-
-  event.sender.send('file', filePath)
+ipcMain.on('addfile', async (event, { name, data }) => {
+  await store.addFile({ name, data })
 })
 
-ipcMain.on('rename', async (event, { currentName, newName }) => {
-  let newPath
-
-  try {
-    newPath = await renameTempFile({ currentName, newName })
-  } catch (err) {
-    console.error(err)
-    event.sender.send('error', err)
-    return
-  }
-
-  event.sender.send('renamed', newPath)
+ipcMain.on('removefile', async (event, id) => {
+  await store.removeFile(id)
 })
 
-ipcMain.on('ondragstart', (event, file) => {
-  // TODO: Generate dragicon using file name.
-  const icon = path.join(__dirname, '..', 'static', 'dragicon.png')
-  event.sender.startDrag({ file, icon  })
+ipcMain.on('renamefile', async (event, {id, newName}) => {
+  await store.renameFile({ id, newName })
+})
+
+ipcMain.on('clearfiles', async event => {
+  await store.clear()
 })
