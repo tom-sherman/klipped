@@ -5,7 +5,7 @@ export class FileDraggable extends Component {
   handleDrag = event => {
     event.dataTransfer.effectAllowed = 'copy'
     event.preventDefault()
-    ipcRenderer.send('ondragstart', this.props.filePath)
+    ipcRenderer.send('drag-file', this.props.filePath)
   }
 
   render () {

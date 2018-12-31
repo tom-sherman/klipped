@@ -53,18 +53,34 @@ app.on('activate', function () {
   }
 })
 
-ipcMain.on('addfile', async (event, { name, data }) => {
-  await store.addFile({ name, data })
+ipcMain.on('add-file', async (event, { name, data }) => {
+  try {
+    const file = await store.addFile({ name, data })
+    event.sender.send('file-created', {
+      name: file.name,
+      data: file.data,
+      id: file.id,
+      path: file.path
+    })
+  } catch (err) {
+    event.sender.send('error', err)
+  }
 })
 
-ipcMain.on('removefile', async (event, id) => {
+ipcMain.on('remove-file', async (event, id) => {
   await store.removeFile(id)
 })
 
-ipcMain.on('renamefile', async (event, {id, newName}) => {
+ipcMain.on('rename-file', async (event, {id, newName}) => {
   await store.renameFile({ id, newName })
 })
 
-ipcMain.on('clearfiles', async event => {
+ipcMain.on('clear-files', async event => {
   await store.clear()
+})
+
+ipcMain.on('drag-file', async (event, file) => {
+  // TODO: Generate dragicon using file name.
+  const icon = path.join(__dirname, '..', 'static', 'dragicon.png')
+  event.sender.startDrag({ file, icon  })
 })

@@ -13,7 +13,7 @@ module.exports.KlipStore = class {
     const dirEnts = await fse.readdir(this.dir, { withFileTypes: true })
     const files = dirEnts
       .filter(dirEnt => dirEnt.isDirectory() && KlipFile.isValidId(dirEnt.name))
-      .map(dirEnt => new KlipFile({ name: dirEnt.name, dir: this.dir }))
+      .map(dirEnt => new KlipFile({ id: dirEnt.name, dir: this.dir }))
 
     const names = await Promise.all(files.map(file => file.getName()))
 
@@ -29,10 +29,11 @@ module.exports.KlipStore = class {
     } else {
       const data = options.data
       const name = options.name || this.defaultName
-      const file = new KlipFile({ name, data, dir })
-      await file.save()
+      file = new KlipFile({ name, data, dir: this.dir })
     }
+    await file.save()
     this._store.set(file.id, file)
+    return file
   }
 
   async removeFile (id) {

@@ -1,7 +1,6 @@
 const fse = require('fs-extra')
 const path = require('path')
 const uuid = require('uuid/v1')
-const os = require('os')
 
 module.exports.KlipFile = class {
   constructor ({
@@ -22,7 +21,7 @@ module.exports.KlipFile = class {
   }
 
   async save () {
-    fse.outputFile(this.path, data, { encoding: 'utf8' })
+    fse.outputFile(this.path, this.data, { encoding: 'utf8' })
   }
 
   async rename (newName) {
@@ -40,7 +39,7 @@ module.exports.KlipFile = class {
   }
 
   async getName () {
-    const fileDir = path.join(this.dir, this.id)
+    const fileDir = path.join(this._dir, this.id)
     const [ name ] = await fse.readdir(fileDir)
     this.name = name
     return name
