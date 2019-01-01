@@ -7,7 +7,7 @@ module.exports.KlipFile = class {
     name,
     dir,
     data = null,
-    id = uuid()
+    id = `${ uuid() }_${ new Date().getTime() }`
   }) {
     /** @type {string} */
     this.name = name
@@ -18,6 +18,10 @@ module.exports.KlipFile = class {
 
   get path () {
     return path.join(this._dir, this.id, this.name)
+  }
+
+  get createdAt () {
+    return new Date(Number.parseInt(this.id.split('_')[1]))
   }
 
   async save () {
@@ -46,12 +50,13 @@ module.exports.KlipFile = class {
   }
 
   static isValidId (string) {
+    const parts = string.split('_')
     const reUuidv1 = /^[0-9A-F]{8}-[0-9A-F]{4}-[1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
-    return reUuidv1.test(string)
+    return parts.length === 2 && reUuidv1.test(parts[0])
   }
 
   serialize () {
-    const { path, id, name } = this
-    return { path, id, name }
+    const { path, id, name, createdAt } = this
+    return { path, id, name, createdAt }
   }
 }

@@ -59,7 +59,8 @@ module.exports.KlipStore = class {
   }
 
   serialize () {
-    const list = Array.from(this._store.values()).map(file => file.serialize())
-    return list
+    return Array.from(this._store.values())
+      .map(file => file.serialize())
+      .sort((a, b) => b.createdAt - a.createdAt)
   }
 }
