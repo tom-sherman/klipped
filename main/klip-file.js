@@ -49,4 +49,9 @@ module.exports.KlipFile = class {
     const reUuidv1 = /^[0-9A-F]{8}-[0-9A-F]{4}-[1][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
     return reUuidv1.test(string)
   }
+
+  serialize () {
+    const { path, id, name } = this
+    return { path, id, name }
+  }
 }

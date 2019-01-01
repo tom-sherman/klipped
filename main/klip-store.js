@@ -57,4 +57,9 @@ module.exports.KlipStore = class {
     await fse.emptyDir(this.dir)
     this._store.clear()
   }
+
+  serialize () {
+    const list = Array.from(this._store.values()).map(file => file.serialize())
+    return list
+  }
 }
