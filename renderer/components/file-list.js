@@ -2,6 +2,6 @@ import { FileDraggable } from './file-draggable'
 
 export function FileList ({ files }) {
   return (<ul>
-    {files.map((file, i) => (<li><FileDraggable filePath={file.path} key={i} /></li>))}
+    {files.map((file, i) => (<li key={i}><FileDraggable filePath={file.path} /></li>))}
   </ul>)
 }
