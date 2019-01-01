@@ -1,10 +1,19 @@
 import { Component } from 'react'
 import Router from 'next/router'
+import electron from 'electron'
 
 export class FileCreator extends Component {
   state = {
     text: null,
     name: null
+  }
+
+  componentDidMount () {
+    if (!electron.remote) {
+      return
+    }
+
+    this.setState({ name: electron.remote.getGlobal('DEFAULT_FILE_NAME') })
   }
 
   handleTextChange = event => {

@@ -6,9 +6,11 @@ const os = require('os')
 const { KlipStore } = require('./klip-store')
 
 let mainWindow
+global.DEFAULT_FILE_NAME = 'untitled.txt'
+
 const store = new KlipStore({
   dir: path.join(os.tmpdir(), 'klipped'),
-  defaultName: 'untitled.txt'
+  defaultName: global.DEFAULT_FILE_NAME
 })
 
 function createWindow () {
