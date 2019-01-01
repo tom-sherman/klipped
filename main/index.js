@@ -84,3 +84,7 @@ ipcMain.on('drag-file', async (event, file) => {
   const icon = path.join(__dirname, '..', 'static', 'dragicon.png')
   event.sender.startDrag({ file, icon  })
 })
+
+ipcMain.on('list-files', event => {
+  event.sender.send('file-list', store.serialize())
+})
