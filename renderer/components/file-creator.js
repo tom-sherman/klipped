@@ -3,8 +3,8 @@ import Router from 'next/router'
 
 export class FileCreator extends Component {
   state = {
-    text: '',
-    name: ''
+    text: null,
+    name: null
   }
 
   handleTextChange = event => {
@@ -45,7 +45,7 @@ export class FileCreator extends Component {
     return (
       <>
         <textarea
-          value={this.state.text}
+          value={this.state.text || ''}
           onChange={this.handleTextChange}
           onKeyPress={e => this.submitOnKeyPress(e, { withControl: true })}
         ></textarea>
