@@ -41,7 +41,13 @@ module.exports.KlipStore = class {
       throw new Error(`File with id of ${ id } is not in the store.`)
     }
 
-    await fse.remove(this._store.get(id).path)
+    try {
+      await fse.remove(this._store.get(id).dir)
+    } catch (err) {
+      console.error(err)
+      event.sender.send('error', err)
+      return
+    }
     this._store.delete(id)
   }
 

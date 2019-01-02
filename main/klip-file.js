@@ -11,13 +11,17 @@ module.exports.KlipFile = class {
   }) {
     /** @type {string} */
     this.name = name
-    this._dir = dir
+    this._baseDir = dir
     this.data = data
     this.id = id
   }
 
   get path () {
-    return path.join(this._dir, this.id, this.name)
+    return path.join(this._baseDir, this.id, this.name)
+  }
+
+  get dir () {
+    return path.join(this._baseDir, this.id)
   }
 
   get createdAt () {
@@ -29,7 +33,7 @@ module.exports.KlipFile = class {
   }
 
   async rename (newName) {
-    const newPath = path.join(this._dir, this.id, newName)
+    const newPath = path.join(this._baseDir, this.id, newName)
     await fse.rename(this.path, newPath)
     this.name = newName
   }
@@ -43,7 +47,7 @@ module.exports.KlipFile = class {
   }
 
   async getName () {
-    const fileDir = path.join(this._dir, this.id)
+    const fileDir = path.join(this._baseDir, this.id)
     const [ name ] = await fse.readdir(fileDir)
     this.name = name
     return name

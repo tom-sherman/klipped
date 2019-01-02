@@ -70,7 +70,14 @@ ipcMain.on('add-file', async (event, { name, data }) => {
 })
 
 ipcMain.on('remove-file', async (event, id) => {
-  await store.removeFile(id)
+  try {
+    await store.removeFile(id)
+  } catch (err) {
+    console.error(err)
+    event.sender.send('error', err)
+    return
+  }
+  event.sender.send('removed-file', id)
 })
 
 ipcMain.on('rename-file', async (event, {id, newName}) => {

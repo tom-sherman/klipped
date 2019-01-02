@@ -4,23 +4,33 @@ import electron from 'electron'
 
 export class FileList extends Component {
   state = {
-    files: this.props.files
+    files: this.props.files,
+    error: null
   }
 
   componentWillReceiveProps (newProps) {
     this.setState({ files: newProps.files })
   }
 
-  handleRemove = id => {
+  handleRemove = async id => {
     const { files } = this.state
     const removeIndex = files.findIndex(file => file.id === id)
-    files.splice(removeIndex, 1)
-    // TODO: Persist to store on main thread
-    this.setState({ files })
+    try {
+      console.log('removing ' + id)
+      await removeFile(id)
+      console.log('removed ' + id)
+      files.splice(removeIndex, 1)
+      this.setState({ files })
+    } catch (error) {
+      console.error(error)
+      this.setState({ error })
+      return
+    }
   }
 
   render () {
-    return (<ul>
+    return (this.state.error ? <span>{this.state.error.message}</span>
+    : <ul>
       {this.state.files.map((file, i) => (
         <li key={i}>
           <FileDraggable filePath={file.path} />
@@ -39,8 +49,8 @@ async function removeFile (id) {
 
     const { ipcRenderer } = electron
 
-    ipcRenderer.send('add-file', { data, name })
-    ipcRenderer.on('file-created', (_, file) => resolve(file))
+    ipcRenderer.send('remove-file', id)
+    ipcRenderer.on('removed-file', (_, deletedId) => resolve(deletedId))
     ipcRenderer.on('error', err => reject(err))
   })
 }
