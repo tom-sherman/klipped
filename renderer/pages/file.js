@@ -19,6 +19,7 @@ class File extends Component {
 
     if (!data) {
       this.setState({ error: new Error('No data found.') })
+      return
     }
 
     try {
