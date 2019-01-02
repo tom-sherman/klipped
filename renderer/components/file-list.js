@@ -30,14 +30,13 @@ export class FileList extends Component {
 
   render () {
     return (this.state.error ? <span>{this.state.error.message}</span>
-    : <ul>
-      {this.state.files.map((file, i) => (
+    : this.state.files.length === 0 ? <span>No files!</span>
+    : <ul>{this.state.files.map((file, i) => (
         <li key={i}>
           <FileDraggable filePath={file.path} />
           <button type='button' onClick={() => this.handleRemove(file.id)}>Remove</button>
-        </li>
-      ))}
-    </ul>)
+        </li>))}
+      </ul>)
   }
 }
 
